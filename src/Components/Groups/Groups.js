@@ -2,11 +2,13 @@ import React, { Component } from "react";
 import "./Groups.css";
 
 const REACT_APP_API_KEY = "cd7182a2e83351df21c02d6c0e4f2d9e";
-class Gallery extends Component {
+class Groups extends Component {
   constructor() {
     super();
     this.state = {
-      pictures: []
+      pictures: [],
+      searchGroupValue: "",
+      groups: []
     };
   }
 
@@ -21,14 +23,43 @@ class Gallery extends Component {
       .then(function(response) {
         return response.json();
       })
-      .then(function(j) {
-        console.log(JSON.stringify(j));
-      });
+      .then(
+        function(j) {
+          // console.log(JSON.stringify(j));
+          var groupsArray = j.groups.group.map(group => {
+            // group.name group.members
+            var groupName = group.name;
+            var groupMembers = group.members;
+            console.log(groupName, " ", groupMembers);
+            return (
+              <div className="col-md-4">
+                <div className="card">
+                  <img
+                    className="avatar"
+                    src="https://www.w3schools.com/howto/img_avatar.png"
+                    alt="Avatar"
+                  />
+                  <h5 className="groupName">{groupName}</h5>
+                  <p className="membersCount">Members : {groupMembers}</p>
+                  <div className="container">
+                    <div className="row">
+                      <hr />
+                      <div className="gal">{this.state.pictures}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          });
+
+          this.setState({ groups: groupsArray });
+        }.bind(this)
+      );
 
     fetch(
       "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=" +
         REACT_APP_API_KEY +
-        "&tags=nyc&per_page=10&page=1&format=json&nojsoncallback=1"
+        "&tags=face&per_page=9&page=1&format=json&nojsoncallback=1"
     )
       .then(function(response) {
         return response.json();
@@ -56,8 +87,8 @@ class Gallery extends Component {
 
   render() {
     return (
-      <div class="container-fluid">
-        <nav class="navbar navbar-nav navbar-default">
+      <div className="container-fluid">
+        <nav className="navbar navbar-nav navbar-default">
           <div className="col-lg-5">
             <div className="input-group">
               <input
@@ -74,26 +105,32 @@ class Gallery extends Component {
           </div>
         </nav>
 
-        <div className="card">
-          <img src="https://www.w3schools.com/howto/img_avatar.png" alt="Avatar" />
-          <div className="container">
-            <h4>
-              <b>John Doe</b>
-            </h4>
-            <p>Architect & Engineer</p>
-            <div className="col-md-4">
-          <div className="row">
-            <hr />
+        <div className="row groupsContainer">
+          <div className="col-md-4">
+            <div className="card">
+              <img
+                className="avatar"
+                src="https://www.w3schools.com/howto/img_avatar.png"
+                alt="Avatar"
+              />
+              <h4>
+                <b>John Doe</b>
+              </h4>
+              <p>Architect & Engineer</p>
+              <div className="container">
+                <div className="row">
+                  <hr />
+                  <div className="gal">{this.state.pictures}</div>
+                </div>
+              </div>
+            </div>
+          </div>
 
-            <div className="gal">{this.state.pictures}</div>
-          </div>
+          {this.state.groups}
         </div>
-          </div>
-        </div>
-        
       </div>
     );
   }
 }
 
-export default Gallery;
+export default Groups;
