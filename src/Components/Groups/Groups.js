@@ -10,7 +10,8 @@ class Groups extends Component {
       searchGroupValue: "",
       groups: [],
       groupID_Images: [],
-      groupIDs:[]
+      groupIDs:[],
+      groupIDs_ImageTags:{}
     };
   }
 
@@ -24,7 +25,7 @@ class Groups extends Component {
         var srcPath = "https://farm" + pic.farm + ".staticflickr.com/" + pic.server + "/" + pic.id + "_" + pic.secret + ".jpg";
         return <img alt="dogs" src={srcPath} />;
       });
-      // console.log(groupImages);
+      console.log(groupImages);
       groupIDImages[groupID] = groupImages;
 
       var newArray = this.state.groupID_Images.slice();    
@@ -32,24 +33,53 @@ class Groups extends Component {
       this.setState({groupID_Images:newArray});
       console.log(this.state.groupID_Images);
       // console.log("FIRST :",this.state.groupID_Images[0][groupID][0].props.src);
-      if(this.state.groupID_Images.length ==9){
-        // this.getImagesfromArray();
-      }
+
+      var groupImageArray = this.state.groupID_Images;
+      let groupIDs_ImageTags={};
+      groupImageArray.map((obj) => {
+        let groupId = Object.keys(obj)[0];
+        let GroupID_picArray = Object.values(obj);
+        let picsArray = [];
+        for (let i = 0; i < GroupID_picArray[0].length; i++) {
+          picsArray.push(
+              <img alt={GroupID_picArray[0][i].props.alt} src={GroupID_picArray[0][i].props.src} />
+          );  
+        }
+        groupIDs_ImageTags[groupId] = picsArray;
+      });
+      this.setState({groupIDs_ImageTags});
   }
 
-  getImagesfromArray(){
+  async getImagesfromArray(){
     var groupImageArray = this.state.groupID_Images;
-    let groupIDs = this.state.groupIDs;
-    let groupImagesSrc = groupImageArray.map((obj, index) =>{
-      // console.log(index);
-      console.log(obj);
-      console.log(Object.keys(obj)[index]);
-      console.log(obj[Object.keys(obj)[0]][0].props.src);
+    let groupIDs_ImageTags={};
+    let groupImagesSrc = groupImageArray.map((obj) => {
+      let groupId = Object.keys(obj)[0];
+      // console.log(obj);
+      // console.log(groupId);
+      // console.log(Object.values(obj));
+      let GroupID_picArray = Object.values(obj);
+      // console.log(GroupID_picArray);
+      let picsArray = [];
+      for (let i = 0; i < GroupID_picArray[0].length; i++) {
+        // console.log(i, GroupID_picArray[0][i].props.src);
+        // picsArray.push(GroupID_picArray[0][i].props.src);
+        picsArray.push(
+            <img alt={GroupID_picArray[0][i].props.alt} src={GroupID_picArray[0][i].props.src} />
+        );  
+      }
+      // console.log(picsArray);
+      groupIDs_ImageTags[groupId] = picsArray;
+      console.log("PICS : ",picsArray);
+      // console.log(obj[Object.keys(obj)[i]][index].props.src);
       // console.log(obj[index][groupIDs[index]][index].props.src);
       // return obj[index][groupIDs[index]][index].props.src;  
       // return <img alt="pic" src={obj[Object.keys(obj)[index]][index].props.src} />  
     });
-    console.log(groupImagesSrc);
+    this.setState({groupIDs_ImageTags});
+    console.log(groupIDs_ImageTags);
+    // console.log(groupIDs_ImageTags["1557286@N20"][0])
+    // console.log(groupImagesSrc);
   }
   async componentDidMount() {
     // alert(REACT_APP_API_KEY);
@@ -93,13 +123,11 @@ class Groups extends Component {
           });
 
           this.setState({ groups: groupsArray, groupIDs });
-          
           // console.log(groupIDs);
           // console.log(groupID_Images);
         }.bind(this)
       );
-      
-      
+
       //fetch random images with tag=face 
     fetch(
       "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=" + REACT_APP_API_KEY +
@@ -118,10 +146,14 @@ class Groups extends Component {
           this.setState({ pictures: picArray });
         }.bind(this)
       ); 
+  }
+
+  componentWillMount(){
 
   }
 
   render() {
+    // const img = this.state.groupIDs_ImageTags;
     return (
       <div className="container-fluid">
         <nav className="navbar navbar-nav navbar-default">
@@ -144,6 +176,11 @@ class Groups extends Component {
         <div className="row groupsContainer">
           {this.state.groups}
         </div>
+        
+          {this.state.groupIDs_ImageTags && this.state.groupIDs_ImageTags["1557286@N20"] ? 
+          <img alt="pic" src={this.state.groupIDs_ImageTags["1557286@N20"][0].props.src} /> : "" }
+          
+        
       </div>
     );
   }
