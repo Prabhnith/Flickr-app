@@ -7,7 +7,7 @@ class Groups extends Component {
     super();
     this.state = {
       searchGroupValue: "",
-      groupImages :{}
+      groupImages :[]
     };
   }
 
@@ -32,18 +32,23 @@ class Groups extends Component {
       let singleGroupImages =  this.fetchGroupImages(group.nsid);
       let groupImages={};
       groupImages[group.nsid] = singleGroupImages;
-      this.setState({groupImages});
-      console.log(groupImages[group.nsid].then(img => {
+      
+      groupImages[group.nsid].then(img => {
+        let newArray =[];
         let is = img.map(i =>{
-          console.log(i);
-          let newArray =[];
+          // console.log(i);
           newArray.push(i);
-          this.setState({images:[...newArray]});
           return (i);
         })
-        console.log(is);
-        return 0;
-      }));
+        groupImages[group.nsid] = newArray;
+        this.setState(prevState => ({
+          groupImages: [...prevState.groupImages, groupImages ]
+        }))
+        newArray=[];
+        // console.log(is);
+        // return 0;
+      });
+      let groupImagesDiv = this.state.groupImages;
       return (
         <div className="col-md-4">
           <div className="card">
@@ -52,7 +57,11 @@ class Groups extends Component {
             <p className="membersCount">Members : {group.members}</p>
             <div className="container">
               <div className="row"> <hr />
-                <div className="gal">{this.state.images}</div>
+                <div className="gal">
+                {
+                  (this.state.groupImages.length >1) ? console.log(this.state.groupImages): <p>Loading...</p>
+                }
+                </div>
               </div>
             </div>
           </div>
