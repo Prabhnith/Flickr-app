@@ -9,11 +9,10 @@ class Gallery extends Component {
       groupGalleryImages: []
     };
   }
-
-  componentWillReceiveProps() {
+  getImages() {
     let groupIDImages = [];
     fetch("https://api.flickr.com/services/rest/?method=flickr.groups.pools.getPhotos&api_key=" +
-      config.REACT_APP_API_KEY + "&group_id=" + this.props.groupID + "&per_page=20&format=json&nojsoncallback=1")
+      config.REACT_APP_API_KEY + "&group_id=" + this.props.match.params.groupID + "&per_page=20&format=json&nojsoncallback=1")
       .then(response => response.json())
       .then(j => j.photos.photo.map(pic => {
         var srcPath = "https://farm" + pic.farm + ".staticflickr.com/" + pic.server + "/" + pic.id + "_" + pic.secret + ".jpg";
@@ -23,6 +22,17 @@ class Gallery extends Component {
         this.setState({ groupGalleryImages: groupIDImages });
       }).catch(e => console.error(e));
   }
+
+  componentWillReceiveProps() {
+    this.getImages()
+  }
+
+  componentDidMount() {
+    console.log(this.props.match.params.groupID);
+    this.getImages()
+
+  }
+
 
   render() {
     return (

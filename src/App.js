@@ -14,7 +14,7 @@ class App extends Component {
             <Redirect to="/groups" />
           )} />
           <Route exact path="/groups" component={Groups} />
-          <Route path="/gallery" component={Gallery} />
+          <Route path="/gallery/:groupID" component={Gallery} />
           <Route path="/overview" component={Overview} />
         </div>
       </Router>
