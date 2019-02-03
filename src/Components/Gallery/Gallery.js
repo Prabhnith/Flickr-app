@@ -67,7 +67,7 @@ class Gallery extends Component {
   fetchNextPageImages() {
     let groupIDImages = [];
     fetch("https://api.flickr.com/services/rest/?method=flickr.groups.pools.getPhotos&api_key=" +
-      config.REACT_APP_API_KEY + "&group_id=" + this.props.match.params.groupID + "&per_page=20" + "&page=" + this.state.pageNum
+      config.REACT_APP_API_KEY + "&group_id=" + this.props.match.params.groupID + "&per_page=20&page=" + this.state.pageNum
       + "&format=json&nojsoncallback=1")
       .then(response => response.json())
       .then(j => j.photos.photo.map(pic => {
